@@ -2,6 +2,11 @@
 - name: EC2 Docker
   hosts: ec2
   become: true
+  
+  vars:
+    ansible_user: "ubuntu"
+    docker_image: "marwanulq/devops-lab:1.0"
+    container_name: "webapp"
 
   tasks:
     - name: Update package cache
@@ -18,3 +23,17 @@
         name: docker
         state: started
         enabled: true
+
+    - name: Add SSH user to Docker group
+      ansible.builtin.user:
+        name: "{{ ansible_user }}"
+        groups: docker
+        append: true
+
+    - name: Pull Docker image
+      ansible.builtin.command:
+        cmd: "docker pull {{ docker_image }}"
+
+    - name: Run Docker container
+      ansible.builtin.command:
+        cmd: "docker run -d --name {{ container_name }} -p 80:80 {{ docker_image }}"
