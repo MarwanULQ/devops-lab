@@ -48,7 +48,10 @@ resource "aws_route_table" "public" {
     Name = "public-route-table"
   }
 }
-
+resource "aws_route_table_association" "public" {
+  subnet_id      = aws_subnet.public.id
+  route_table_id = aws_route_table.public.id
+}
 resource "aws_security_group" "sg" {
   name        = "ec2_security_group"
   description = "security group for ec2 machine to allow ssh and http"
